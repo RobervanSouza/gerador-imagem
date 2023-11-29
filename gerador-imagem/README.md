@@ -2,3 +2,16 @@ Software usados =
 
 Designer: npx shadcn-ui@latest init
 autenticação:   npm install @clerk/nextjs
+efeito css : npm i typewriter-effect
+icons:npm install lucide-react
+separator: npx shadcn-ui@latest add separator
+drizzle:  npm install drizzle-orm
+database: npm i @neondatabase/serverless
+dotenv: npm intall dotenv 
+
+subindo banco: npx drizzle-kit push:pg
+npm intall pg >> para funcionar o studio
+studio:  npx drizzle-kit studio
+
+dialog component: npx shadcn-ui@latest add dialog
+inptu: npx shadcn-ui@latest add input
