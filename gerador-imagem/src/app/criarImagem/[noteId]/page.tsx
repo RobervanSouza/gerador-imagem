@@ -45,21 +45,21 @@ const Imagem = async ({ params: { noteId } }: Props) => {
             </Button>
           </Link>
           <div className="w-3"></div>
-          <span className=" font-semibold" >
+          <span className=" font-semibold">
             {user.firstName} {user.lastName}
           </span>
-          <span className=" inline-block mx-1" >/</span>
-          <span className=" text-stone-500 font-bold" > {note.name} </span>
+          <span className=" inline-block mx-1">/</span>
+          <span className=" text-stone-500 font-bold"> {note.name} </span>
           <div className="ml-auto"> Deletar </div>
         </div>
         <div className="h-4"></div>
-        <div className=" border-red-100 shadow-xl border rounded-lg px-16 w-full" >
-        {/* editar */}
+        <div
+          className=" border-blue-500 shadow-xl border rounded-lg px-16 w-full"
+          >
+          {/* editar */}
 
-        <TiptapEditor/>
-
+          <TiptapEditor />
         </div>
-
       </div>
     </div>
   );

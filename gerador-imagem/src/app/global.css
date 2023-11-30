@@ -76,3 +76,11 @@
 }
 
 
+.tiptap.ProseMirror{
+  outline: none;
+}
+
+.is-active{
+  background-color: rgb(145, 138, 138);
+  border-radius: 15px;
+}

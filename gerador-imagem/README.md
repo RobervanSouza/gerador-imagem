@@ -29,3 +29,4 @@ npm install @clerk/backend
 
 
 editor:   npm install @tiptap/react @tiptap/pm @tiptap/starter-kit
+tailwind: npm install -D @tailwindcss/typography
