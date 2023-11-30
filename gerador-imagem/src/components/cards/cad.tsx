@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -8,13 +8,55 @@ import {
   DialogTitle,
   DialogDescription,
 } from "../ui/dialog";
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { useMutation } from "@tanstack/react-query";
+import axios from 'axios';
+import { useRouter } from "next/navigation";
 
 
 interface Props {}
 
 const Cards = (props: Props) => {
+  const router = useRouter();
+  const [input, setInput] = useState('');
+
+
+const criaImagem = useMutation({
+  mutationFn: async () => {
+    try {
+      console.log("Enviando requisição POST para /api/createNotbook");
+      const response = await axios.post("/api/criarImagem", {
+        name: input,
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error("Erro na requisição:", error);
+      throw error;
+    }
+  },
+});
+
+const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
+  if (input === "") {
+    window.alert("Digite algo!!!");
+    return;
+  }
+  criaImagem.mutate(undefined, {
+    onSuccess: ({note_id}) => {
+      console.log("Imagem Criada com sucesso", {note_id});
+      router.push(`/criarImagem/${note_id}`)
+    },
+    onError: (erro) => {
+      console.error("Erro ao criar a imagem:", erro);
+      window.alert("Erro ao criar")
+    },
+  });
+};
+
   return (
     <Dialog>
       <DialogTrigger>
@@ -25,16 +67,30 @@ const Cards = (props: Props) => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-           <DialogTitle>
-             Quer criar uma nova imagem?
-           </DialogTitle>
-           <DialogDescription>
-            Clicar no botão abaixo!!!
-           </DialogDescription>
+          <DialogTitle>Quer criar uma nova imagem?</DialogTitle>
+          <DialogDescription>Clicar no botão abaixo!!!</DialogDescription>
         </DialogHeader>
-        <form>
-          <Input placeholder="Digite o nome da imagem..." />
-            <div className="h-4" ></div>
+        <form onSubmit={handleSubmit} >
+          <Input 
+          value={input}
+          onChange={(event) => setInput(event.target.value) }
+          placeholder="Digite o nome da imagem..." />
+          <div className="h-4"></div>
+          <div className="flex items-center gap-2">
+            <Button
+              type="reset"
+              variant={"secondary"}
+              className="bg-red-600 text-white">
+              Cancelar
+            </Button>
+            <Button type="submit" className="bg-green-600" disabled={criaImagem.isPending} >
+              
+                  {criaImagem.isPending && (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              )}
+              
+              Criar</Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

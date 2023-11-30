@@ -15,3 +15,12 @@ studio:  npx drizzle-kit studio
 
 dialog component: npx shadcn-ui@latest add dialog
 inptu: npx shadcn-ui@latest add input
+openai: npm install openai-edge
+
+npm install @tanstack/react-query
+npm instal axios
+
+
+
+
+***** executar banco de dados npx drizzle-kit studio
