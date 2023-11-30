@@ -58,7 +58,7 @@ const Imagem = async ({ params: { noteId } }: Props) => {
           >
           {/* editar */}
 
-          <TiptapEditor />
+          <TiptapEditor note={note} />
         </div>
       </div>
     </div>
