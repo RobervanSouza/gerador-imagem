@@ -24,3 +24,8 @@ npm instal axios
 
 
 ***** executar banco de dados npx drizzle-kit studio
+
+npm install @clerk/backend
+
+
+editor:   npm install @tiptap/react @tiptap/pm @tiptap/starter-kit
