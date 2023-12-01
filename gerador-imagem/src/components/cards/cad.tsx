@@ -22,6 +22,20 @@ const Cards = (props: Props) => {
   const router = useRouter();
   const [input, setInput] = useState('');
 
+const editarFirebase = useMutation({
+  mutationFn: async(noteId: string) => {
+    const response = await axios.post('/api/editarFirebase',{
+ noteId
+    })
+    return response.data
+  }
+})
+
+
+
+
+
+
 
 const criaImagem = useMutation({
   mutationFn: async () => {
@@ -48,6 +62,7 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
   criaImagem.mutate(undefined, {
     onSuccess: ({note_id}) => {
       console.log("Imagem Criada com sucesso", {note_id});
+      editarFirebase.mutate(note_id)
       router.push(`/criarImagem/${note_id}`)
     },
     onError: (erro) => {
