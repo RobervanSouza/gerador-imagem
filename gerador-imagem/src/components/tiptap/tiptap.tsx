@@ -9,43 +9,43 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { NoteType } from "@/lib/db/schema";
 import Text from "@tiptap/extension-text";
-import {useCompletion} from "ai/react";
+import { useCompletion } from "ai/react";
 interface Props {
-    note: NoteType
+  note: NoteType;
 }
+// ... (imports omitidos para brevidade)
 
-const TiptapEditor = ({note}: Props) => {
-  const [editorState, setTipEditor] = useState(note.editorState || `<h1>${note.name}</h1>`);
-  
-  const {complete, completion} = useCompletion({
-    api: '/api/autoTexto'
-  })
+const TiptapEditor = ({ note }: Props) => {
+  const [editorState, setTipEditor] = useState(
+    note.editorState || `<h1>${note.name}</h1>`
+  );
+
+  const { complete, completion } = useCompletion({
+    api: "/api/autoTexto",
+  });
 
   const salvar = useMutation({
     mutationFn: async () => {
-       // console.log("Enviando dados:", { noteId: note.id, editorState });
-        const response = await axios.post("/api/salvaDescricao", {
-          noteId: note.id,
-          editorState,
-        });
-        return response.data;
-    }
-  })
+      const response = await axios.post("/api/salvaDescricao", {
+        noteId: note.id,
+        editorState,
+      });
+      return response.data;
+    },
+  });
 
   const autoComplete = Text.extend({
     addKeyboardShortcuts() {
-        return {
-            'Shift-a': () => {
-                const prompt = this.editor.getText().split("").slice(-30).join(" ");
-                complete(prompt);
-                return true;
-            },
-        }
+      return {
+        "Shift-a": () => {
+          const prompt = this.editor.getText().split("").slice(-30).join(" ");
+          complete(prompt);
+          return true;
+        },
+      };
     },
-  })
+  });
 
-
- 
   const editor = useEditor({
     autofocus: true,
     extensions: [StarterKit, autoComplete],
@@ -64,26 +64,38 @@ const TiptapEditor = ({note}: Props) => {
     editor.commands.insertContent(diff);
   }, [completion, editor]);
 
-
   const debouceEditor = useDebouce(editorState, 500);
 
   useEffect(() => {
-    if(debouceEditor === '') return;
+    if (debouceEditor === "") return;
     salvar.mutate(undefined, {
-        onSuccess: data => {
-            console.log("deu update ", data)
-        }, onError: err =>{
-            console.error(err, "erro aqui " )
-        }
-    })
-  
-    
+      onSuccess: (data) => {
+        console.log("deu update ", data);
+      },
+      onError: (err) => {
+        console.error(err, "erro aqui ");
+      },
+    });
   }, [debouceEditor]);
+
+  const handleAutoCompleteButtonClick = () => {
+    if (editor !== null) {
+      const prompt = editor.getHTML().split("").slice(-30).join(" ");
+      complete(prompt);
+    }
+  };
+
+
   return (
     <>
-      <div className=" top-3 p-2">
-        <div className=" flex p-2 gap-3 ">
+      <div className="top-3 p-2">
+        <div className="flex p-2 gap-3">
           {editor && <TiptapMenuBar editor={editor} />}
+
+          {/* Adicione o botão aqui */}
+          <Button variant="outline" onClick={handleAutoCompleteButtonClick}>
+            Completar
+          </Button>
 
           <Button disabled variant={"outline"}>
             {salvar.isPending ? "salvando ..." : "salvar"}
@@ -94,12 +106,11 @@ const TiptapEditor = ({note}: Props) => {
         </div>
         <div className="h-4"></div>
         <span className="text-sm">
-          Precione  {""}
-            {""}
+          Pressione&nbsp;
           <kbd className="px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg">
-             Shift + A
-          </kbd>{" "}
-          para completar o codigo!!!
+            Shift + A
+          </kbd>
+          &nbsp;ou no botão completar a descrição!!!
         </span>
       </div>
     </>
