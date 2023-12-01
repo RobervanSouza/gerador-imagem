@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
 import TiptapMenuBar from "./tiptapMenuBar";
@@ -9,6 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { NoteType } from "@/lib/db/schema";
 import Text from "@tiptap/extension-text";
+import {useCompletion} from "ai/react";
 interface Props {
     note: NoteType
 }
@@ -16,6 +17,10 @@ interface Props {
 const TiptapEditor = ({note}: Props) => {
   const [editorState, setTipEditor] = useState(note.editorState || `<h1>${note.name}</h1>`);
   
+  const {complete, completion} = useCompletion({
+    api: '/api/autoTexto'
+  })
+
   const salvar = useMutation({
     mutationFn: async () => {
         console.log("Enviando dados:", { noteId: note.id, editorState });
@@ -31,12 +36,16 @@ const TiptapEditor = ({note}: Props) => {
     addKeyboardShortcuts() {
         return {
             'Shift-a': () => {
-                console.log("autoComplete")
+                const prompt = this.editor.getText().split("").slice(-30).join(" ");
+                complete(prompt);
                 return true;
             },
         }
     },
   })
+
+
+ 
   const editor = useEditor({
     autofocus: true,
     extensions: [StarterKit, autoComplete],
@@ -45,6 +54,17 @@ const TiptapEditor = ({note}: Props) => {
       setTipEditor(editor.getHTML());
     },
   });
+
+  const lastCompletion = React.useRef("");
+
+  React.useEffect(() => {
+    if (!completion || !editor) return;
+    const diff = completion.slice(lastCompletion.current.length);
+    lastCompletion.current = completion;
+    editor.commands.insertContent(diff);
+  }, [completion, editor]);
+
+
   const debouceEditor = useDebouce(editorState, 500);
 
   useEffect(() => {
