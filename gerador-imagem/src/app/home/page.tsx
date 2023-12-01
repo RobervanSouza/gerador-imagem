@@ -1,14 +1,20 @@
-import Cards from '@/components/cards/cad'
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
-import { UserButton } from '@clerk/nextjs'
+import Cards from "@/components/cards/cad";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { db } from "@/lib/db";
+import { $notes } from "@/lib/db/schema";
+import { UserButton, auth } from "@clerk/nextjs";
+import { eq } from "drizzle-orm";
+import { ArrowLeft, Key } from "lucide-react";
+import Link from "next/link";
+import React from "react";
 
-import { ArrowLeft } from 'lucide-react'
-
-import Link from 'next/link'
-import React from 'react'
-
-const Dashboard = () => {
+const Dashboard = async () => {
+  const { userId } = auth();
+  const notes = await db
+    .select()
+    .from($notes)
+    .where(eq($notes.userId, userId!));
   return (
     <div className="grainy min-h-screen">
       <div className="max-w-7x1 mx-auto p-10">
@@ -24,23 +30,51 @@ const Dashboard = () => {
             <div className="w-4"></div>
             <h1 className="text-3x1 font-bold text-blue-600">Minhas imagens</h1>
             <div className="w-4"></div>
-            <UserButton/>
+            <UserButton />
           </div>
         </div>
-        <div className="h-8" ></div>
-        <Separator/>
-        <div className="h-8" ></div>
-        <div className='text-center'>
-           <h2 className='text-xl text-red-600' >
-            Gerar uma nova imagem
-           </h2>
-        </div>
+        <div className="h-8"></div>
+        <Separator />
+        <div className="h-8"></div>
+
+        {notes.length === 0 && (
+          <div className="text-center">
+            <h2 className="text-xl text-red-600">
+              Você não tem imagens geradas!!!
+            </h2>
+          </div>
+        )}
+
         <div className="grid sm:grid-cols-3 md:grid-cols-5 grid-cols-1 gap-3 ">
-        <Cards/>
+          <Cards />
+          {notes.map((note) => {
+            return (
+              <a href={`/notes/${note.id}`} key={note.id}>
+                <div className=" border border-blue-700 rounded-lg overflow-hidden flex flex-col hover:shadow-xl transition hover:translate-y-1">
+                  <img
+                   width={400}
+                   height={200}
+                   alt={note.name}
+                   src={note.imageUrl || ""}
+                  
+                  />
+                  <div className=" p-4" >
+                    <h3 className=" text-xl font-semibold text-gray-950" >
+                      {note.name}
+                    </h3>
+                    <div className="h-1" ></div>
+                    <p className=" text-sm text-blue-700" >
+                    { new Date(note.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              </a>
+            );
+          })}
         </div>
       </div>
     </div>
   );
-}
+};
 
-export default Dashboard
+export default Dashboard;
