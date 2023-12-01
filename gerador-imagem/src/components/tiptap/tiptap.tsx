@@ -23,7 +23,7 @@ const TiptapEditor = ({note}: Props) => {
 
   const salvar = useMutation({
     mutationFn: async () => {
-        console.log("Enviando dados:", { noteId: note.id, editorState });
+       // console.log("Enviando dados:", { noteId: note.id, editorState });
         const response = await axios.post("/api/salvaDescricao", {
           noteId: note.id,
           editorState,
@@ -80,19 +80,28 @@ const TiptapEditor = ({note}: Props) => {
     
   }, [debouceEditor]);
   return (
-    <><div className=" top-3 p-2">
+    <>
+      <div className=" top-3 p-2">
+        <div className=" flex p-2 gap-3 ">
+          {editor && <TiptapMenuBar editor={editor} />}
 
-      <div className=" flex p-2 gap-3 ">
-        {editor && <TiptapMenuBar editor= {editor} />}
-        
-        <Button disabled variant={"outline"} >
+          <Button disabled variant={"outline"}>
             {salvar.isPending ? "salvando ..." : "salvar"}
-        </Button>
+          </Button>
+        </div>
+        <div className="prose prose-sm w-full mt-4">
+          <EditorContent editor={editor} />
+        </div>
+        <div className="h-4"></div>
+        <span className="text-sm">
+          Precione  {""}
+            {""}
+          <kbd className="px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg">
+             Shift + A
+          </kbd>{" "}
+          para completar o codigo!!!
+        </span>
       </div>
-      <div className="prose" >
-        <EditorContent editor={editor} />
-      </div>
-    </div>
     </>
   );
 };
