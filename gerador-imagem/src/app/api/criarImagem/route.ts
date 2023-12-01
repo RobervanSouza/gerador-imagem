@@ -5,7 +5,7 @@ import { gerarImagem, gerarPrompt } from "../../../service/api/apiOpenai";
 import { db } from "@/lib/db";
 import { $notes } from "@/lib/db/schema";
 
-export const runtime = 'edge';
+export const runtime = 'edge'; // deploy
 
 export async function POST(req: Request) {
   
