@@ -8,13 +8,13 @@ import { useDebouce } from "@/lib/db/useDebounce";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { NoteType } from "@/lib/db/schema";
-
+import Text from "@tiptap/extension-text";
 interface Props {
     note: NoteType
 }
 
 const TiptapEditor = ({note}: Props) => {
-  const [editorState, setTipEditor] = useState("");
+  const [editorState, setTipEditor] = useState(note.editorState || `<h1>${note.name}</h1>`);
   
   const salvar = useMutation({
     mutationFn: async () => {
@@ -26,9 +26,20 @@ const TiptapEditor = ({note}: Props) => {
         return response.data;
     }
   })
+
+  const autoComplete = Text.extend({
+    addKeyboardShortcuts() {
+        return {
+            'Shift-a': () => {
+                console.log("autoComplete")
+                return true;
+            },
+        }
+    },
+  })
   const editor = useEditor({
     autofocus: true,
-    extensions: [StarterKit],
+    extensions: [StarterKit, autoComplete],
     content: editorState,
     onUpdate: ({ editor }) => {
       setTipEditor(editor.getHTML());
@@ -45,7 +56,7 @@ const TiptapEditor = ({note}: Props) => {
             console.error(err, "erro aqui " )
         }
     })
-   console.log(debouceEditor)
+  
     
   }, [debouceEditor]);
   return (
