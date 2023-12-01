@@ -8,6 +8,7 @@ import { eq } from "drizzle-orm";
 import { ArrowLeft, Key } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import Image from "next/image";
 
 const Dashboard = async () => {
   const { userId } = auth();
@@ -49,9 +50,9 @@ const Dashboard = async () => {
           <Cards />
           {notes.map((note) => {
             return (
-              <a href={`/notes/${note.id}`} key={note.id}>
+              <a href={`/criarImagem/${note.id}`} key={note.id}>
                 <div className=" border border-blue-700 rounded-lg overflow-hidden flex flex-col hover:shadow-xl transition hover:translate-y-1">
-                  <img
+                  <Image
                    width={400}
                    height={200}
                    alt={note.name}

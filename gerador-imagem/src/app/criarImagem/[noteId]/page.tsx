@@ -1,3 +1,4 @@
+import DeleteButton from "@/components/delete/delete";
 import TiptapEditor from "@/components/tiptap/tiptap";
 import { Button } from "@/components/ui/button";
 import { db } from "@/lib/db";
@@ -50,7 +51,9 @@ const Imagem = async ({ params: { noteId } }: Props) => {
           </span>
           <span className=" inline-block mx-1">/</span>
           <span className=" text-stone-500 font-bold"> {note.name} </span>
-          <div className="ml-auto"> Deletar </div>
+          <div className="ml-auto">
+            <DeleteButton noteId={note.id} />
+             </div>
         </div>
         <div className="h-4"></div>
         <div
